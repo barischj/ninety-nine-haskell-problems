@@ -7,7 +7,7 @@ myLast :: Foldable f => f a -> Maybe a
 myLast = foldl (\_ x -> Just x) Nothing
 
 -- | Question 2.
-myButLast :: Foldable f => f a -> Maybe a 
+myButLast :: Foldable f => f a -> Maybe a
 myButLast = fst . foldl (\(x, y) z -> (y, Just z)) (Nothing, Nothing)
 
 -- | Question 3.
@@ -29,35 +29,24 @@ isPalindrome :: Eq a => [a] -> Bool
 isPalindrome xs = xs == reverse xs
 
 -- | Question 7.
+data NestedList a = Elem a | List [NestedList a]
 
-data Tree a = Leaf a | Node [Tree a]
+flatten :: NestedList a -> [a]
+flatten (Elem x)  = [x]
+flatten (List ls) = concatMap flatten ls
 
-flatten :: Tree a -> [a]
-flatten (Leaf x)  = [x]
-flatten (Node xs) = concatMap flatten xs
-
-concatMap_ :: (a -> [b]) -> [a] -> [b]
-concatMap_ f = concat . map f
-
-concat_ :: [[a]] -> [a]
-concat_ []     = []
-concat_ (x:xs) = x ++ concat_ xs
-
+-- | Question 8.
 compress :: Eq a => [a] -> [a]
-compress xs = compress' xs Nothing
+compress []     = []
+compress (x:xs) = x : compress (dropWhile (== x) xs)
 
-compress' :: Eq a => [a] -> Maybe a -> [a]
-compress' [] _ = []
-compress' (x:xs) Nothing = x : compress' xs (Just x)
-compress' (x:xs) (Just c)
-  | x == c    =     compress' xs (Just c)
-  | otherwise = x : compress' xs (Just x)
+-- | Question 9.
+pack :: Eq a => [a] -> [[a]]
+pack []     = []
+pack (e:xs) = (e : es) : pack notEs
+  where (es, notEs) = span (== e) xs
 
--- foldr :: (a -> b -> b) -> b -> [a] -> b
--- b = (Maybe a, a)
--- compress'' = foldr cons
---   where cons x Nothing  = [x]
---         cons x (Just c)
---           | x == c =
-
-
+-- Question 10.
+encode :: Eq a => [a] -> [(Int, a)]
+encode = map f . pack
+  where f x = (length x, head x)

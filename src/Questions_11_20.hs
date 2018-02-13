@@ -14,5 +14,24 @@ encodeModified = map f . Q_1_10.encode
 -- | Question 12.
 decodeModified :: [Encoded a] -> [a]
 decodeModified = concatMap f
-  where f (Single    x) = [x]
+  where f (Single     x) = [x]
         f (Multiple n x) = replicate n x
+
+-- | Question 13.
+encodeDirect :: Eq a => [a] -> [Encoded a]
+encodeDirect [] = []
+encodeDirect (e:xs) = currE:encodeDirect notEs
+  where (es, notEs) = span (== e) xs
+        currE = case length (e:es) of
+          1 -> Single     e
+          l -> Multiple l e
+
+-- | Question 14.
+dupli :: [a] -> [a]
+dupli (x:xs) = x:x:dupli xs
+
+-- | Question 15.
+repli :: [a] -> Int -> [a]
+repli xs n = foldl (\acc e -> acc ++ repliX e n) [] xs
+  where repliX _ 0 = []
+        repliX x n = x:repliX x (n - 1)
